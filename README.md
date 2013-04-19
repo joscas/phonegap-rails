@@ -18,6 +18,14 @@ Or install it yourself as:
 
     $ gem install phonegap-rails
 
+Initialize:
+
+    $ rails g phonegap_rails:install
+
+Edit your config file according to your environment:
+
+   config/phonegap_rails.yml
+
 ## Usage
 
 ### Export android project
