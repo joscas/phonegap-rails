@@ -1,0 +1,15 @@
+#
+# common settings
+# common:
+#   phonegap_path: <Your phonegap installation path>
+#
+common:
+  phonegap_path: '~/phonegap/phonegap-2.3.0'
+
+#
+#  android settings
+# android:
+#   bundle_id: <Bundle identifier of your app>
+#
+android:
+  bundle_id: 'com.example.appname'
