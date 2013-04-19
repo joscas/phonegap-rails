@@ -28,9 +28,14 @@ Edit your config file according to your environment:
 
 ## Usage
 
-### Export android project
+### Create android project
+
+    $ rake phonegap:rails:android:create
+
+### Export application assets to the android Phonegap project
 
     $ rake phonegap:rails:android:export
+
 
 #### Requirements
 - Phonegap
