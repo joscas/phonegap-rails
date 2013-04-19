@@ -1,7 +1,2 @@
-require "phonegap-rails/version"
+require 'phonegap_rails'
 
-module Phonegap
-  module Rails
-    # Your code goes here...
-  end
-end
