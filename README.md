@@ -44,6 +44,14 @@ Launch emulator
 
     $ rake phonegap:rails:android:emulate
 
+Clean
+
+    $ rake phonegap:rails:android:clean
+
+Log
+
+    $ rake phonegap:rails:android:log
+
 #### Requirements
 - Phonegap
 - Android SDK [http://developer.android.com](http://developer.android.com)

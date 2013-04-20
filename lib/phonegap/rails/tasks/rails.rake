@@ -32,20 +32,43 @@ namespace :phonegap do
         paths.each do |path|
           environment.append_path path
         end
-        #puts environment['application.js']
+        puts '* javascript assets'
+        file = File.open("#{project_path}/assets/www/js/application.js", "w")
+        file.write environment['application.js']
+        file.close
+        puts '* css assets'
+        file = File.open("#{project_path}/assets/www/css/application.css", "w")
+        file.write environment['application.css']
+        file.close
+        puts '* images'
+        `cp app/assets/images/* #{project_path}/assets/www/img/`
+        puts '* index.html'
+        file = File.open("#{project_path}/assets/www/index2.html", "w")
+        file.write environment['phonegap_rails_android_index.html']
+        file.close
       end
       desc 'build android phonegap project'
       task :build => :environment do
-        ### /path/to/my_new_cordova_project/cordova/debug
         command = "#{project_path}/cordova/build"
         puts "Building project: #{command}"
         puts `#{command}`
       end
       desc 'Launch emulator for android phonegap project'
       task :emulate => :environment do
-        ### /path/to/my_new_cordova_project/cordova/emulate
         command = "#{project_path}/cordova/run"
         puts "Launching emulator: #{command}"
+        puts `#{command}`
+      end
+      desc 'Clean android phonegap project'
+      task :clean => :environment do
+        command = "#{project_path}/cordova/clean"
+        puts "Cleaning project: #{command}"
+        puts `#{command}`
+      end
+      desc 'Log'
+      task :clean => :environment do
+        command = "#{project_path}/cordova/log"
+        puts "Log: #{command}"
         puts `#{command}`
       end
     end
@@ -53,6 +76,7 @@ namespace :phonegap do
       desc 'export Phonegap project for ios'
       task :export  => :environment do
         # TODO: export project
+        puts "Not implemented"
       end
     end
   end
