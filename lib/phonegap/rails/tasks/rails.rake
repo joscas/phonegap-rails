@@ -41,20 +41,13 @@ namespace :phonegap do
         file.write environment['application.css']
         file.close
         puts '* images'
-        `cp app/assets/images/* #{project_path}/assets/www/img/`
+        FileUtils.cp_r "app/assets/images/.", "#{project_path}/assets/www/img"
         puts '* index.html'
-        #file = File.open("#{project_path}/assets/www/index2.html", "w")
-        #file.write environment['phonegap_rails_android_index.html']
-        #file.close
         @app_title = main_activity
         public_source = File.expand_path('../../../../public', __FILE__)
-        content = File.read("#{public_source}/android_index.html.erb")
-        #t = ERB.new(content)
-        #t.result(binding)
         file = File.open("#{project_path}/assets/www/index.html", "w")
-        file.write ERB.new(content).result
+        file.write ERB.new(File.read("#{public_source}/android_index.html.erb")).result
         file.close
-        #FileUtils.cp "#{public_source}/phonegap_rails_android_index.html", "#{project_path}/assets/www/index.html"
       end
       desc 'build android phonegap project'
       task :build => :environment do
