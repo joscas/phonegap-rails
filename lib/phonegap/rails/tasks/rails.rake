@@ -16,6 +16,15 @@ namespace :phonegap do
       abort
     end
     
+    desc 'Test generator within task'
+    task :generate => :environment do
+      puts "Calling generator"
+      #require 'rails/generators'
+      #source_root File.expand_path('generators/phonegap_rails/install/templates', __FILE__)
+      #copy_file "config/phonegap_rails.yml" "phonegap_rails.yml"
+      puts File.expand_path('../../../public', __FILE__)
+    end
+    
     namespace :android do
       desc 'create Phonegap project for android'
       task :create => :environment do
