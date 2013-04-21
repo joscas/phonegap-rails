@@ -16,15 +16,6 @@ namespace :phonegap do
       abort
     end
     
-    desc 'Test generator within task'
-    task :generate => :environment do
-      puts "Calling generator"
-      #require 'rails/generators'
-      #source_root File.expand_path('generators/phonegap_rails/install/templates', __FILE__)
-      #copy_file "config/phonegap_rails.yml" "phonegap_rails.yml"
-      puts File.expand_path('../../../public', __FILE__)
-    end
-    
     namespace :android do
       desc 'create Phonegap project for android'
       task :create => :environment do
@@ -52,9 +43,18 @@ namespace :phonegap do
         puts '* images'
         `cp app/assets/images/* #{project_path}/assets/www/img/`
         puts '* index.html'
-        file = File.open("#{project_path}/assets/www/index2.html", "w")
-        file.write environment['phonegap_rails_android_index.html']
+        #file = File.open("#{project_path}/assets/www/index2.html", "w")
+        #file.write environment['phonegap_rails_android_index.html']
+        #file.close
+        @app_title = main_activity
+        public_source = File.expand_path('../../../../public', __FILE__)
+        content = File.read("#{public_source}/android_index.html.erb")
+        #t = ERB.new(content)
+        #t.result(binding)
+        file = File.open("#{project_path}/assets/www/index.html", "w")
+        file.write ERB.new(content).result
         file.close
+        #FileUtils.cp "#{public_source}/phonegap_rails_android_index.html", "#{project_path}/assets/www/index.html"
       end
       desc 'build android phonegap project'
       task :build => :environment do
