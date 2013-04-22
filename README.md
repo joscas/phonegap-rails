@@ -1,6 +1,5 @@
 # Phonegap::Rails
 [![Dependency Status](https://gemnasium.com/joscas/phonegap-rails.png)](https://gemnasium.com/joscas/phonegap-rails)
-[![Build Status](https://travis-ci.org/joscas/phonegap-rails.png)](https://travis-ci.org/joscas/phonegap-rails)
 
 This gem provides generators for the Phonegap APIs. It is intended to be used within the scope of single page web applications that have a Ruby on Rails API backend. For example, Ember.js / Rails apps.
 
