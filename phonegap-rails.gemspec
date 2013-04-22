@@ -12,8 +12,8 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{Handle asset pipeline and generate Phonegap projects for single page web apps such as Ember-Rails apps}
   gem.homepage      = "http://rubygems.org/gems/phonegap-rails"
   
-  gem.add_development_dependency "rspec"
-  gem.add_dependency "sprockets"
+  #gem.add_development_dependency "rspec"
+  #gem.add_dependency "sprockets"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

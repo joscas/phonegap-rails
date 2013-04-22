@@ -1,24 +1,35 @@
 namespace :phonegap do
   namespace :rails do
     config_path = File.join(Rails.root, 'config', 'phonegap_rails.yml')
-    config = YAML.load(File.read(config_path))
-    phonegap_path = config["phonegap_path"]
-    if phonegap_path.blank?
-      puts "You have to specify phonegap path at config/phonegap_rails.yml"
-      abort
-    end
-    scripts_path = phonegap_path + '/lib/android/bin'
-    main_activity = Rails.application.class.to_s.split("::").first
-    project_path = 'phonegap/android/' + main_activity
-    package = config["android"]["package"]
-    if package.blank?
-      puts "You have to specify an android package at config/phonegap_rails.yml"
-      abort
+    if File.exist?(config_path)
+      config_file = File.read(config_path)
+    #end
+    #unless config_file.nil?
+      config = YAML.load(config_file)
+      unless config.nil?
+        unless config['phonegap_path'].nil?
+          phonegap_path = config['phonegap_path']
+          scripts_path = phonegap_path + '/lib/android/bin'
+        end
+        main_activity = Rails.application.class.to_s.split("::").first
+        project_path = 'phonegap/android/' + main_activity
+        unless config['android'].nil?
+          package = config['android']["package"] unless config['android']["package"].nil?
+        end
+      end
     end
     
     namespace :android do
       desc 'create Phonegap project for android'
       task :create => :environment do
+        if phonegap_path.blank?
+          puts "You have to specify phonegap path at config/phonegap_rails.yml"
+          abort
+        end
+        if package.blank?
+          puts "You have to specify an android package at config/phonegap_rails.yml"
+          abort
+        end
         puts "Creating android project"     
         command = "#{scripts_path}/create #{project_path} #{package} #{main_activity}"
         puts "creating project: #{command}"
@@ -27,11 +38,7 @@ namespace :phonegap do
       desc 'export application assets to android phonegap project'
       task :export => :environment do
         puts "Exporting android project"
-        environment = Sprockets::Environment.new
-        paths = Rails.application.config.assets.paths
-        paths.each do |path|
-          environment.append_path path
-        end
+        environment = Rails.application.assets        
         puts '* javascript assets'
         file = File.open("#{project_path}/assets/www/js/application.js", "w")
         file.write environment['application.js']
