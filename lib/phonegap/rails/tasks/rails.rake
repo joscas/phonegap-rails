@@ -3,8 +3,6 @@ namespace :phonegap do
     config_path = File.join(Rails.root, 'config', 'phonegap_rails.yml')
     if File.exist?(config_path)
       config_file = File.read(config_path)
-    #end
-    #unless config_file.nil?
       config = YAML.load(config_file)
       unless config.nil?
         unless config['phonegap_path'].nil?
@@ -47,8 +45,13 @@ namespace :phonegap do
         file = File.open("#{project_path}/assets/www/css/application.css", "w")
         file.write environment['application.css']
         file.close
-        puts '* images'
-        FileUtils.cp_r "app/assets/images/.", "#{project_path}/assets/www/img"
+        puts '* other assets (images and fonts)'
+        other_paths = Rails.configuration.assets.paths.select {|x| x =~ /\/fonts$|\/images$/}
+        other_paths.each do |path|
+          FileUtils.cp_r path, "#{project_path}/assets/www/assets"
+        end
+        puts '* public folder'
+        FileUtils.cp_r 'app/public', "#{project_path}/assets/www"
         puts '* index.html'
         @app_title = main_activity
         public_source = File.expand_path('../../../../public', __FILE__)

@@ -1,7 +1,7 @@
 ##
 ##  general settings
 ##
-# phonegap_path: '~/Development/phonegap-2.6.0'
+#phonegap_path: '~/Development/phonegap-2.6.0'
 #
 ##  android settings
 #android:
