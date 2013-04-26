@@ -14,6 +14,7 @@ namespace :phonegap do
         unless config['android'].nil?
           package = config['android']["package"] unless config['android']["package"].nil?
         end
+        api_server = config['api_server'] unless config['api_server'].nil?
       end
     end
     
@@ -46,18 +47,42 @@ namespace :phonegap do
         file.write environment['application.css']
         file.close
         puts '* other assets (images and fonts)'
+        FileUtils.mkdir_p "#{project_path}/assets/www/assets"
         other_paths = Rails.configuration.assets.paths.select {|x| x =~ /\/fonts$|\/images$/}
         other_paths.each do |path|
-          FileUtils.cp_r path, "#{project_path}/assets/www/assets"
+          files = Dir.glob("#{path}/**/*.*")
+          files.each do |file|
+            FileUtils.cp file, "#{project_path}/assets/www/assets"
+          end
         end
         puts '* public folder'
-        FileUtils.cp_r 'app/public', "#{project_path}/assets/www"
+        FileUtils.cp_r 'public/.', "#{project_path}/assets/www/"
         puts '* index.html'
         @app_title = main_activity
         public_source = File.expand_path('../../../../public', __FILE__)
         file = File.open("#{project_path}/assets/www/index.html", "w")
         file.write ERB.new(File.read("#{public_source}/android_index.html.erb")).result
         file.close
+        
+        puts '* fix relative paths'
+        css_file_path = "#{project_path}/assets/www/css/application.css"
+        css_file = File.read(css_file_path)
+        new_css_file = css_file.gsub(/\/assets/, '../assets')
+        file = File.open(css_file_path, "w")
+        file.puts new_css_file
+        file.close        
+        js_file_path = "#{project_path}/assets/www/js/application.js"
+        js_file = File.read(js_file_path)
+        new_js_file = js_file.gsub(/src=\\"\//, 'src=\"')
+        if api_server.blank?
+          puts "Warning: No API server is specified for this app"
+        else
+          new_js_file = new_js_file.gsub(/href=\\"\//, 'href=\"'+api_server+'/')
+        end
+        file = File.open(js_file_path, "w")
+        file.puts new_js_file
+        file.close
+        
       end
       desc 'build android phonegap project'
       task :build => :environment do
