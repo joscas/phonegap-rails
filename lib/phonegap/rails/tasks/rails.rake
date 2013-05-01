@@ -37,16 +37,19 @@ namespace :phonegap do
       desc 'export application assets to android phonegap project'
       task :export => :environment do
         puts "Exporting android project"
-        environment = Rails.application.assets        
+        environment = Rails.application.assets
+        ## Export js assets
         puts '* javascript assets'
         file = File.open("#{project_path}/assets/www/js/application.js", "w")
         file.write environment['application.js']
         file.close
+        ## Export css assets
         puts '* css assets'
         file = File.open("#{project_path}/assets/www/css/application.css", "w")
         file.write environment['application.css']
         file.close
-        puts '* other assets (images and fonts)'
+        ## Export images and fonts
+        puts '* images and fonts'
         FileUtils.mkdir_p "#{project_path}/assets/www/assets"
         other_paths = Rails.configuration.assets.paths.select {|x| x =~ /\/fonts$|\/images$/}
         other_paths.each do |path|
@@ -55,6 +58,7 @@ namespace :phonegap do
             FileUtils.cp file, "#{project_path}/assets/www/assets"
           end
         end
+        ## Export public folder
         puts '* public folder'
         FileUtils.cp_r 'public/.', "#{project_path}/assets/www/"
         puts '* index.html'
@@ -63,8 +67,8 @@ namespace :phonegap do
         file = File.open("#{project_path}/assets/www/index.html", "w")
         file.write ERB.new(File.read("#{public_source}/android_index.html.erb")).result
         file.close
-        
-        puts '* fix relative paths'
+        ## Fix relative paths and configure API server
+        puts 'Fix relative paths'
         css_file_path = "#{project_path}/assets/www/css/application.css"
         css_file = File.read(css_file_path)
         new_css_file = css_file.gsub(/\/assets/, '../assets')
@@ -77,7 +81,23 @@ namespace :phonegap do
         if api_server.blank?
           puts "Warning: No API server is specified for this app"
         else
-          new_js_file = new_js_file.gsub(/href=\\"\//, 'href=\"'+api_server+'/')
+          if new_js_file =~ /href=\\"\//
+            puts "Relative paths found. Making absolute to reference API: #{api_server}"
+            new_js_file.gsub!(/href=\\"\//, 'href=\"'+api_server+'/')
+          end
+          if new_js_file =~ /ember/
+            if new_js_file =~ /DS\.Store\.extend/ and (
+               new_js_file =~ /RESTAdapter/ or
+               not new_js_file =~ /DS\.Store\.extend.*\(.*\{.*adapter:.*\}.*\)/mx
+               )
+              puts "ember.js RESTAdapter found. Adding API url #{api_server} to RESTAdapter"
+              new_js_file << "\nDS.RESTAdapter.reopen({url: '#{api_server}'});//Added phonegap-rails"
+            end
+            if new_js_file =~ /(Auth\.Config\.reopen[^\(\{]*\([^\(\{]*\{)/mx
+              puts "ember-auth found. Adding API baseUrl: #{api_server}"
+              new_js_file.sub!(/(Auth\.Config\.reopen[^\(\{]*\([^\(\{]*\{)/mx,"#{$1}\n\tbaseUrl: '#{api_server}',//Added phonegap-rails")
+            end
+          end
         end
         file = File.open(js_file_path, "w")
         file.puts new_js_file

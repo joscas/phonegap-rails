@@ -1,9 +1,9 @@
 ##
-##  general settings
+##  General settings
 ##
-#phonegap_path: '~/Development/phonegap-2.6.0'
-#api_server: 'http://example.com'
-#
-##  android settings
+#phonegap_path:             '~/Development/phonegap-2.6.0'
+#api_server:                'http://example.com'
+
+##  Android settings
 #android:
-#  package:                    'com.example.appname'
+#   package:                'com.example.appname'
