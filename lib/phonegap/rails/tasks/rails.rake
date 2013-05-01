@@ -60,7 +60,9 @@ namespace :phonegap do
         end
         ## Export public folder
         puts '* public folder'
-        FileUtils.cp_r 'public/.', "#{project_path}/assets/www/"
+        Dir.glob("public/**/*.*").each do |file|
+          FileUtils.cp file, "#{project_path}/assets/www/" unless file =~ /public\/assets\//
+        end
         puts '* index.html'
         @app_title = main_activity
         public_source = File.expand_path('../../../../public', __FILE__)
