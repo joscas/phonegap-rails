@@ -4,7 +4,7 @@ namespace :phonegap do
     if File.exist?(config_path)
       config_file = File.read(config_path)
       config = YAML.load(config_file)
-      unless config.nil?
+      unless config.nil? or config === false
         unless config['phonegap_path'].nil?
           phonegap_path = config['phonegap_path']
           scripts_path = phonegap_path + '/lib/android/bin'
