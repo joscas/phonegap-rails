@@ -19,6 +19,11 @@ namespace :phonegap do
     end
     
     namespace :android do
+      
+      desc 'Perform all tasks required to run the application as an Android project'
+      task :initall => [:create,:export,:build,:emulate] do
+      end
+      
       desc 'create Phonegap project for android'
       task :create => :environment do
         if phonegap_path.blank?
@@ -125,7 +130,7 @@ namespace :phonegap do
         puts `#{command}`
       end
       desc 'Log'
-      task :clean => :environment do
+      task :log => :environment do
         command = "#{project_path}/cordova/log"
         puts "Log: #{command}"
         puts `#{command}`
