@@ -14,7 +14,7 @@ namespace :phonegap do
         unless config['android'].nil?
           package = config['android']["package"] unless config['android']["package"].nil?
         end
-        api_server = config['api_server'] unless config['api_server'].nil?
+        @api_server = config['api_server'] unless config['api_server'].nil?
       end
     end
     
@@ -75,7 +75,6 @@ namespace :phonegap do
         file.write ERB.new(File.read("#{public_source}/android_index.html.erb")).result
         file.close
         ## Fix relative paths and configure API server
-        puts 'Fix relative paths'
         css_file_path = "#{project_path}/assets/www/css/application.css"
         css_file = File.read(css_file_path)
         new_css_file = css_file.gsub(/\/assets/, '../assets')
@@ -85,25 +84,12 @@ namespace :phonegap do
         js_file_path = "#{project_path}/assets/www/js/application.js"
         js_file = File.read(js_file_path)
         new_js_file = js_file.gsub(/src=\\"\//, 'src=\"')
-        if api_server.blank?
+        if @api_server.blank?
           puts "Warning: No API server is specified for this app"
         else
           if new_js_file =~ /href=\\"\//
-            puts "Relative paths found. Making absolute to reference API: #{api_server}"
-            new_js_file.gsub!(/href=\\"\//, 'href=\"'+api_server+'/')
-          end
-          if new_js_file =~ /ember/
-            if new_js_file =~ /DS\.Store\.extend/ and (
-               new_js_file =~ /RESTAdapter/ or
-               not new_js_file =~ /DS\.Store\.extend.*\(.*\{.*adapter:.*\}.*\)/mx
-               )
-              puts "ember.js RESTAdapter found. Adding API url #{api_server} to RESTAdapter"
-              new_js_file << "\nDS.RESTAdapter.reopen({url: '#{api_server}'});//Added phonegap-rails"
-            end
-            if new_js_file =~ /(Auth\.Config\.reopen[^\(\{]*\([^\(\{]*\{)/mx
-              puts "ember-auth found. Adding API baseUrl: #{api_server}"
-              new_js_file.sub!(/(Auth\.Config\.reopen[^\(\{]*\([^\(\{]*\{)/mx,"#{$1}\n\tbaseUrl: '#{api_server}',//Added phonegap-rails")
-            end
+            puts "Relative paths found. Making absolute to reference API: #{@api_server}"
+            new_js_file.gsub!(/href=\\"\//, 'href=\"'+@api_server+'/')
           end
         end
         file = File.open(js_file_path, "w")

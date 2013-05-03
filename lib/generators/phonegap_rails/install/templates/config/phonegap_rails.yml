@@ -2,7 +2,7 @@
 ##  General settings
 ##
 #phonegap_path:             '~/Development/phonegap-2.6.0'
-#api_server:                'http://example.com'
+#api_server:                'http://example.com' //This will be accessible through API_SERVER global var
 
 ##  Android settings
 #android:
